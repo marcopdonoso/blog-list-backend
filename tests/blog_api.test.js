@@ -13,7 +13,7 @@ beforeEach(async () => {
 		const blogObject = new Blog(blog)
 		await blogObject.save()
 	}
-}, 10000)
+}, 100000)
 
 test('blogs are returned as json', async () => {
 	await api
@@ -34,6 +34,27 @@ test('the name of unique identifier of blogs is id', async () => {
 	blogs.body.forEach(blogObject => {
 		expect(blogObject.id).toBeDefined()
 	})
+})
+
+test('a new blog can be added', async () => {
+	const newBlog = {
+		title: 'How To Write Unit Tests In NodeJS With JEST Test Library',
+		author: 'Bhargav Bachina',
+		url: 'https://medium.com/bb-tutorials-and-thoughts/how-to-write-unit-tests-in-nodejs-with-jest-test-library-a201658829c7',
+		likes: 232,
+	}
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-type', /application\/json/)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+	const titles = blogsAtEnd.map(b => b.title)
+	expect(titles).toContain(newBlog.title)
 })
 
 afterAll(() => {
