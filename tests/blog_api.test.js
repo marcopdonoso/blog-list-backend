@@ -57,6 +57,26 @@ test('a new blog can be added', async () => {
 	expect(titles).toContain(newBlog.title)
 })
 
+test('a blog without likes is added with zero likes', async () => {
+	const newBlog = {
+		title: 'How To Write Unit Tests In NodeJS With JEST Test Library',
+		author: 'Bhargav Bachina',
+		url: 'https://medium.com/bb-tutorials-and-thoughts/how-to-write-unit-tests-in-nodejs-with-jest-test-library-a201658829c7',
+	}
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-type', /application\/json/)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+	const likes = blogsAtEnd.map(b => b.likes)
+	expect(likes[likes.length - 1]).toBe(0)
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
