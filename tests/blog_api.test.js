@@ -77,6 +77,17 @@ test('a blog without likes is added with zero likes', async () => {
 	expect(likes[likes.length - 1]).toBe(0)
 })
 
+test('blog without title or url is not added', async () => {
+	const newBlog = {
+		author: 'Bhargav Bachina',
+	}
+
+	await api.post('/api/blogs').send(newBlog).expect(400)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
