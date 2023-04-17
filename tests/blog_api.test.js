@@ -104,6 +104,27 @@ test('succeeds deletion of a blog with valid id', async () => {
 	expect(titles).not.toContain(blogToDelete.title)
 })
 
+test('succeeds modification of an existing blog with valid id', async () => {
+	const blogsAtStart = await helper.blogsInDb()
+
+	const blogExistingId = blogsAtStart[0].id
+	console.log(blogExistingId)
+
+	const blogPropertiesToUpdate = {
+		likes: 256,
+	}
+
+	const updatedBlog = await api
+		.put(`/api/blogs/${blogExistingId}`)
+		.send(blogPropertiesToUpdate)
+		.expect(200)
+		.expect('Content-type', /application\/json/)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+	expect(updatedBlog.body.likes).toBe(256)
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
