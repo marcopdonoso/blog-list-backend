@@ -14,6 +14,7 @@ describe('when there is initially some blogs saved', () => {
 
 		const users = await helper.usersInDb()
 		const user = await User.findById(users[0].id)
+		user.blogs = []
 
 		for (const blog of helper.initialBlogs) {
 			blog.user = user._id
