@@ -15,6 +15,7 @@ describe('when there is initially one user in DB', () => {
 
 		const user = new User({
 			username: 'root',
+			name: 'Admin User',
 			passwordHash,
 		})
 
